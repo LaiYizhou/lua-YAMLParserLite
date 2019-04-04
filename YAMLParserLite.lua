@@ -10,6 +10,8 @@ local ssub, gsub = string.sub, string.gsub
 local sfind, smatch = string.find, string.match
 local tinsert, tremove = table.insert, table.remove
 
+-- help function
+
 local function select(list, pred)
   local selected = {}
   for i = 0, #list do
@@ -21,6 +23,10 @@ local function select(list, pred)
   return selected
 end
 
+local function trim(str)
+    return string.gsub(str, "^%s*(.-)%s*$", "%1")
+end
+
 local function ltrim(str)
   return smatch(str, "^%s*(.-)$")
 end
@@ -29,14 +35,22 @@ local function rtrim(str)
   return smatch(str, "^(.-)%s*$")
 end
 
-local function parse_string(scalar)
-    scalar = string.gsub(scalar, "%s+", "")
-    scalar = string.match(scalar, '%"(.+)%"')
-    return scalar
+local function isemptyline(line)
+    return line == '' or sfind(line, '^%s*$') or sfind(line, '^%s*#')
 end
 
-local function isemptyline(line)
-  return line == '' or sfind(line, '^%s*$') or sfind(line, '^%s*#')
+-- implement function
+
+local function parse_string(scalar)
+    scalar = trim(scalar)
+    local str = string.match(scalar, '%"(.+)%"')
+    -- scalar = string.match(scalar, '%"(.+)%"')
+    if nil ~= str then
+        return str
+    else
+        str = string.match(scalar, '\'(.+)\'')
+        return str
+    end
 end
 
 local function parse_scalar(scalar)
@@ -64,6 +78,14 @@ local function parse_scalar(scalar)
         return true
     elseif v == 'false' or v == 'False' or v == 'FALSE' then
         return false
+    elseif v == '.inf' or v == '.Inf' or v == '.INF' then
+        return math.huge
+    elseif v == '+.inf' or v == '+.Inf' or v == '+.INF' then
+        return math.huge
+    elseif v == '-.inf' or v == '-.Inf' or v == '-.INF' then
+        return -math.huge
+    elseif v == '.nan' or v == '.NaN' or v == '.NAN' then
+        return 0 / 0
     elseif sfind(v, '^[%+%-]?[0-9]+$') or sfind(v, '^[%+%-]?[0-9]+%.$')then
         return tonumber(v)  -- : int
     elseif sfind(v, '^[%+%-]?[0-9]+%.[0-9]+$') then
@@ -76,11 +98,12 @@ end
 local function parse_key_value_pair(line)
 
     -- print("1. parse_key_value_pair()", line)
-    line = string.gsub(line, "%s+", "")
-    line = string.gsub(line, "%-", "")
+    line = trim(line)
+    line = string.gsub(line, "%-%s*", "")
     -- print("2. parse_key_value_pair()", line)
 
-    local key, value = string.match(line, "(.+):(.+)")
+    -- Attention: "- " (_ and a space) is necessary for yaml 
+    local key, value = string.match(line, "(.+):%s(.+)")
     key = parse_scalar(key)
     value = parse_scalar(value)
     return key, value
@@ -89,8 +112,8 @@ end
 local function parse_brace_line(line)
 
     -- print("1. parse_brace_line()", line)
-    line = string.gsub(line, "%s+", "")
-    line = string.gsub(line, "%-", "")
+    line = trim(line)
+    line = string.gsub(line, "%-%s*", "")
     line = string.match(line, "%{(.+)%}")
     -- print("2. parse_brace_line()", line)
 
