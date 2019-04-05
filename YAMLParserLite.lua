@@ -1,8 +1,22 @@
-YAMLParserLite = class("YAMLParserLite")
+-- YAMLParserLite = class("YAMLParserLite")
 
-function YAMLParserLite:initialize()
-end
--- 以上为 配合已有结构
+-- function YAMLParserLite:initialize()
+-- end
+
+-- function YAMLParserLite:parse(yaml)
+--     local lines = {}
+--     for line in string.gmatch(yaml..'\n', '(.-)\n') do
+--         table.insert(lines, line)
+--     end
+
+--     local docs = parse_documents(lines)
+--     if #docs == 1 then
+--         return docs[1]
+--     end
+--     return docs
+-- end
+
+-- 以上是为了 配合个人已有结构
 
 local schar = string.char
 local ssub, gsub = string.sub, string.gsub
@@ -442,7 +456,7 @@ local function parse_documents(lines)
 
 end
 
-function YAMLParserLite:parse(yaml)
+local function parse(yaml)
     local lines = {}
     for line in string.gmatch(yaml..'\n', '(.-)\n') do
         table.insert(lines, line)
@@ -454,3 +468,9 @@ function YAMLParserLite:parse(yaml)
     end
     return docs
 end
+
+return {
+  null = null,
+  parse = parse,
+}
+
