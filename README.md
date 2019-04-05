@@ -9,23 +9,22 @@ A LITE yaml parser， that can parse yaml to lua table when I work with unity3d
 
 所以，*很多功能都不支持，比如，yaml文件开头跳过、类型转换、#注释等*
 
-支持的功能 详见【题外话：YAML概述】部分
+支持的功能 详见【题外话I：YAML概述】部分
 
 ### 2. 建议用法
 
 ```lua
 local str = [[
-	Animal:
-		- Dog
-		- Cat
-		- Goldfish
-	Fruits:
-		- Banana
-		- Apple
+  Animal:
+    - Dog
+    - Cat
+    - Goldfish
+  Fruits:
+    - Banana
+    - Apple
 ]]
-    
--- 按路径require YAMLParserLite.lua 文件即可
-local yaml = require("../YAMLParserLite")
+
+local yaml = require("../YAMLParserLite") -- 按路径require YAMLParserLite.lua 文件即可
 local tb = yaml.parse(str) -- 自此，解析成功，存入tb
 ```
 
@@ -36,7 +35,7 @@ local tb = yaml.parse(str) -- 自此，解析成功，存入tb
 
 ---
 
-### * 题外话I. YAML概述
+### * 题外话I: YAML概述
 
 YAML（发音 /ˈjæməl/ ）是一个配表格式，本质上可以认为：**就是一个字符串**
 
@@ -89,8 +88,8 @@ YAML（发音 /ˈjæməl/ ）是一个配表格式，本质上可以认为：**�
     - Cat
     - Goldfish
   -
-  	- Banana
-  	- Apple
+    - Banana
+    - Apple
   ```
 
 - **第4种：Key是纯量、Value是纯量 的Map**
@@ -118,11 +117,11 @@ YAML（发音 /ˈjæməl/ ）是一个配表格式，本质上可以认为：**�
 
   ```yaml
   - 
-  	name: A
-  	age: 25
+    name: A
+    age: 25
   -
-  	name: B
-  	age: 27
+    name: B
+    age: 27
   ```
 
   或者
@@ -142,8 +141,8 @@ YAML（发音 /ˈjæməl/ ）是一个配表格式，本质上可以认为：**�
     - Cat
     - Goldfish
   Fruits:
-  	- Banana
-  	- Apple
+    - Banana
+    - Apple
   ```
 
   或者
@@ -164,7 +163,7 @@ YAML（发音 /ˈjæməl/ ）是一个配表格式，本质上可以认为：**�
   Friend2: { speed_up: 1 }
   ```
 
-### * 题外话II. Lua Table概述
+### * 题外话II: Lua Table概述
 
 主要提及一下Lua中Table的Key，其中Value自然可以是Lua中支持的各种类型
 
@@ -175,9 +174,9 @@ YAML（发音 /ˈjæməl/ ）是一个配表格式，本质上可以认为：**�
 ```lua
 local tb1 = 
 {
-  	[-1] = 1,
-  	[0] = 0,
-  	[1] = 23,
+  [-1] = 1,
+  [0] = 0,
+  [1] = 23,
 }
 ```
 
@@ -186,8 +185,8 @@ local tb1 =
 ```lua
 local tb2 = 
 {
-  	["dog"] = 12,
-  	["cat"] = 30,
+  ["dog"] = 12,
+  ["cat"] = 30,
 }
 ```
 
@@ -196,8 +195,8 @@ local tb2 =
 ```lua
 local tb3 = 
 {
-  	dog = 12,
-  	cat = 30,
+  dog = 12,
+  cat = 30,
 }
 ```
 
