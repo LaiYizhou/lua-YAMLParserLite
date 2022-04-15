@@ -179,9 +179,32 @@ local function parse_string(line, stopper)
       end
       line = ssub(line, 2)
     end
-    return rtrim(buf), line
+    return rtrim( buf), line
 end
 
+local function parse_scalar0(v)
+  if v == 'null' or v == 'Null' or v == 'NULL'then
+    return null
+  elseif v == 'true' or v == 'True' or v == 'TRUE' then
+    return true
+  elseif v == 'false' or v == 'False' or v == 'FALSE' then
+    return false
+  elseif v == '.inf' or v == '.Inf' or v == '.INF' then
+    return math.huge
+  elseif v == '+.inf' or v == '+.Inf' or v == '+.INF' then
+    return math.huge
+  elseif v == '-.inf' or v == '-.Inf' or v == '-.INF' then
+    return -math.huge
+  elseif v == '.nan' or v == '.NaN' or v == '.NAN' then
+    return 0 / 0
+  elseif sfind(v, '^[+-]?%d+%.?%d-$') -- 1.1
+      or sfind(v, '^[+-]?%.%d+$') --.1
+      or sfind(v, '^[+-]?%d+%.?%d-[Ee][+-]?%d+$') --1.1e1
+  then
+    return tonumber(v)
+  end
+  return v
+end
 local function parse_flowstyle(line, lines)
   local stack = {}
   while true do
@@ -240,6 +263,7 @@ local function parse_flowstyle(line, lines)
       if not s then
         error('invalid flowstyle line: '..line)
       end
+      s=parse_scalar0(s)
       tinsert(stack, {v=s, t='s'})
       line = rest
     end
@@ -278,27 +302,8 @@ local function parse_scalar(line, lines)
     end
   
     -- Regular unquoted string
-    local v = line
-    if v == 'null' or v == 'Null' or v == 'NULL'then
-      return null
-    elseif v == 'true' or v == 'True' or v == 'TRUE' then
-      return true
-    elseif v == 'false' or v == 'False' or v == 'FALSE' then
-      return false
-    elseif v == '.inf' or v == '.Inf' or v == '.INF' then
-      return math.huge
-    elseif v == '+.inf' or v == '+.Inf' or v == '+.INF' then
-      return math.huge
-    elseif v == '-.inf' or v == '-.Inf' or v == '-.INF' then
-      return -math.huge
-    elseif v == '.nan' or v == '.NaN' or v == '.NAN' then
-      return 0 / 0
-    elseif sfind(v, '^[%+%-]?[0-9]+$') or sfind(v, '^[%+%-]?[0-9]+%.$')then
-      return tonumber(v)
-    elseif sfind(v, '^[%+%-]?[0-9]+%.[0-9]+$') then
-      return tonumber(v)
-    end
-    return v
+    -- local v = line
+    return parse_scalar0(line)
 end
 
 local parse_map
